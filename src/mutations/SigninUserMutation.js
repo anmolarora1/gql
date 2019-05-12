@@ -31,6 +31,8 @@ export default (email, password, callback) => {
       const token = response.signinUser.token;
       callback(id, token);
     },
-    onError: err => console.error(err)
+    onError: err => {
+      console.error(err);
+    }
   });
 };
