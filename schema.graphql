@@ -43,6 +43,15 @@ type AddToVotesOnLinkPayload {
   votesVoteEdge: VoteEdge
 }
 
+input AUTH_PROVIDER_EMAIL {
+  email: String!
+  password: String!
+}
+
+input AuthProviderSignupData {
+  email: AUTH_PROVIDER_EMAIL
+}
+
 input CreateFile {
   name: String!
 }
@@ -63,7 +72,6 @@ input CreateLink {
   description: String!
   url: String!
   postedById: ID
-  postedBy: LinkpostedByUser
   votesIds: [ID!]
   votes: [LinkvotesVote!]
 }
@@ -72,7 +80,6 @@ input CreateLinkInput {
   description: String!
   url: String!
   postedById: ID
-  postedBy: LinkpostedByUser
   votesIds: [ID!]
   votes: [LinkvotesVote!]
   clientMutationId: String!
@@ -107,14 +114,12 @@ input CreateVote {
   linkId: ID
   link: VotelinkLink
   userId: ID
-  user: VoteuserUser
 }
 
 input CreateVoteInput {
   linkId: ID
   link: VotelinkLink
   userId: ID
-  user: VoteuserUser
   clientMutationId: String!
 }
 
@@ -740,17 +745,8 @@ enum LinkOrderBy {
   url_DESC
 }
 
-input LinkpostedByUser {
-  name: String!
-  linksIds: [ID!]
-  links: [UserlinksLink!]
-  votesIds: [ID!]
-  votes: [UservotesVote!]
-}
-
 input LinkvotesVote {
   userId: ID
-  user: VoteuserUser
 }
 
 type Mutation {
@@ -775,6 +771,7 @@ type Mutation {
   removeFromUsersLinks(input: RemoveFromUsersLinksUserInput!): RemoveFromUsersLinksPayload
   removeFromUsersVotes(input: RemoveFromUsersVotesUserInput!): RemoveFromUsersVotesPayload
   removeFromVotesOnLink(input: RemoveFromVotesOnLinkLinkInput!): RemoveFromVotesOnLinkPayload
+  signinUser(input: SigninUserInput!): SigninPayload!
   createUser(input: SignupUserInput!): CreateUserPayload!
   invokeFunction(input: InvokeFunctionInput!): InvokeFunctionPayload
 }
@@ -855,6 +852,21 @@ type RemoveFromVotesOnLinkPayload {
   votesVoteEdge: VoteEdge
 }
 
+"""
+If authentication was successful the payload contains the user and a token. If unsuccessful this payload is null.
+"""
+type SigninPayload {
+  token: String
+  user: User
+  clientMutationId: String
+  viewer: Viewer!
+}
+
+input SigninUserInput {
+  email: AUTH_PROVIDER_EMAIL
+  clientMutationId: String!
+}
+
 input SignupUserInput {
   name: String!
   linksIds: [ID!]
@@ -862,6 +874,7 @@ input SignupUserInput {
   votesIds: [ID!]
   votes: [UservotesVote!]
   clientMutationId: String!
+  authProvider: AuthProviderSignupData!
 }
 
 input UpdateFile {
@@ -887,7 +900,6 @@ input UpdateLink {
   id: ID!
   url: String
   postedById: ID
-  postedBy: LinkpostedByUser
   votesIds: [ID!]
   votes: [LinkvotesVote!]
 }
@@ -897,7 +909,6 @@ input UpdateLinkInput {
   id: ID!
   url: String
   postedById: ID
-  postedBy: LinkpostedByUser
   votesIds: [ID!]
   votes: [LinkvotesVote!]
   clientMutationId: String!
@@ -997,7 +1008,6 @@ input UpdateVote {
   linkId: ID
   link: VotelinkLink
   userId: ID
-  user: VoteuserUser
 }
 
 input UpdateVoteInput {
@@ -1005,7 +1015,6 @@ input UpdateVoteInput {
   linkId: ID
   link: VotelinkLink
   userId: ID
-  user: VoteuserUser
   clientMutationId: String!
 }
 
@@ -1020,9 +1029,11 @@ type UpdateVotePayload {
 
 type User implements Node {
   createdAt: DateTime!
+  email: String
   id: ID!
   links(filter: LinkFilter, orderBy: LinkOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection
   name: String!
+  password: String
   updatedAt: DateTime!
   votes(filter: VoteFilter, orderBy: VoteOrderBy, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection
 }
@@ -1076,6 +1087,46 @@ input UserFilter {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
   id: ID
 
   """All values that are not equal to given value."""
@@ -1156,6 +1207,46 @@ input UserFilter {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -1196,10 +1287,14 @@ input UserlinksLink {
 enum UserOrderBy {
   createdAt_ASC
   createdAt_DESC
+  email_ASC
+  email_DESC
   id_ASC
   id_DESC
   name_ASC
   name_DESC
+  password_ASC
+  password_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
@@ -1218,7 +1313,7 @@ type Viewer {
   user: User
   File(id: ID, secret: String, url: String): File
   Link(id: ID): Link
-  User(id: ID): User
+  User(email: String, id: ID): User
   Vote(id: ID): Vote
   id: ID!
 }
@@ -1350,7 +1445,6 @@ input VotelinkLink {
   description: String!
   url: String!
   postedById: ID
-  postedBy: LinkpostedByUser
   votesIds: [ID!]
   votes: [LinkvotesVote!]
 }
@@ -1362,13 +1456,5 @@ enum VoteOrderBy {
   id_DESC
   updatedAt_ASC
   updatedAt_DESC
-}
-
-input VoteuserUser {
-  name: String!
-  linksIds: [ID!]
-  links: [UserlinksLink!]
-  votesIds: [ID!]
-  votes: [UservotesVote!]
 }
 
