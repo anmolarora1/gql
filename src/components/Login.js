@@ -39,7 +39,7 @@ function Login(props) {
         {!loginState && (
           <input
             value={userDetails.name}
-            onChange={e => setUserDetails('name', e.targe.value)}
+            onChange={e => setUserDetails('name', e.target.value)}
             type="text"
             placeholder="Your name"
           />

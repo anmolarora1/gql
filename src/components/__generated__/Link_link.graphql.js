@@ -15,6 +15,14 @@ export type Link_link = {|
   +id: string,
   +description: string,
   +url: string,
+  +createdAt: any,
+  +postedBy: ?{|
+    +id: string,
+    +name: string,
+  |},
+  +votes: ?{|
+    +count: number
+  |},
   +$refType: Link_link$ref,
 |};
 export type Link_link$data = Link_link;
@@ -25,20 +33,22 @@ export type Link_link$key = {
 */
 
 
-const node/*: ReaderFragment*/ = {
+const node/*: ReaderFragment*/ = (function(){
+var v0 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "id",
+  "args": null,
+  "storageKey": null
+};
+return {
   "kind": "Fragment",
   "name": "Link_link",
   "type": "Link",
   "metadata": null,
   "argumentDefinitions": [],
   "selections": [
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "id",
-      "args": null,
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "kind": "ScalarField",
       "alias": null,
@@ -52,9 +62,54 @@ const node/*: ReaderFragment*/ = {
       "name": "url",
       "args": null,
       "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "createdAt",
+      "args": null,
+      "storageKey": null
+    },
+    {
+      "kind": "LinkedField",
+      "alias": null,
+      "name": "postedBy",
+      "storageKey": null,
+      "args": null,
+      "concreteType": "User",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "kind": "ScalarField",
+          "alias": null,
+          "name": "name",
+          "args": null,
+          "storageKey": null
+        }
+      ]
+    },
+    {
+      "kind": "LinkedField",
+      "alias": null,
+      "name": "votes",
+      "storageKey": null,
+      "args": null,
+      "concreteType": "VoteConnection",
+      "plural": false,
+      "selections": [
+        {
+          "kind": "ScalarField",
+          "alias": null,
+          "name": "count",
+          "args": null,
+          "storageKey": null
+        }
+      ]
     }
   ]
 };
+})();
 // prettier-ignore
-(node/*: any*/).hash = '4db5e0eb9875bd761c8f8ef68ea507f3';
+(node/*: any*/).hash = 'dbb22117f24aabdb245a2a2b789e24a8';
 module.exports = node;

@@ -6,8 +6,8 @@ import { createFragmentContainer, graphql } from 'react-relay';
 function LinkList(props) {
   return (
     <div>
-      {props.viewer.allLinks.edges.map(({ node }) => (
-        <Link key={node.__id} link={node} />
+      {props.viewer.allLinks.edges.map(({ node }, index) => (
+        <Link key={node.__id} index={index} link={node} />
       ))}
     </div>
   );
